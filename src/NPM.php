@@ -1,13 +1,13 @@
 <?php
 
-namespace abhishek6262\NodePHP;
+namespace Yama\NodeInPhp;
 
-use abhishek6262\NodePHP\System\Environment;
-use abhishek6262\NodePHP\System\Response;
+use Yama\NodeInPhp\System\Environment;
+use Yama\NodeInPhp\System\Response;
 
 /**
  * Class NPM
- * @package abhishek6262\NodePHP
+ * @package Yama\NodeInPhp
  */
 class NPM
 {

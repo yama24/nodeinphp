@@ -1,10 +1,10 @@
 <?php
 
-namespace abhishek6262\NodePHP\System;
+namespace Yama\NodeInPhp\System;
 
 /**
  * Class Response
- * @package abhishek6262\NodePHP\System
+ * @package Yama\NodeInPhp\System
  */
 class Response
 {
