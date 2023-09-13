@@ -1,0 +1,23 @@
+{
+  "name": "yama/nodeinphp",
+  "description": "A PHP wrapper around Node JS.",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Yayan Maulana",
+      "email": "maulana24@live.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Yama\\NodeInPhp\\": "src/"
+    }
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "require": {
+    "php": "^5.6||^7.1||^8.0",
+    "tivie/php-os-detector": "^1.1"
+  }
+}
