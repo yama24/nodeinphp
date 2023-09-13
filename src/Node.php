@@ -27,7 +27,7 @@ class Node
      * @param  Environment $environment
      * @param  string $rootPath
      */
-    public function __construct(Environment $environment, string $rootPath = '')
+    public function __construct(Environment $environment, $rootPath = '')
     {
         $this->environment = $environment;
         $this->rootPath    = $rootPath;
@@ -42,7 +42,7 @@ class Node
      *
      * @return bool
      */
-    public function exists(): bool
+    public function exists()
     {
         $bin = $this->environment->getNodeBin();
 
@@ -76,7 +76,7 @@ class Node
      * 
      * @return Response
      */
-    public function rawCommand(string $command): Response
+    public function rawCommand($command)
     {
         $CURRENT_WORKING_DIRECTORY = getcwd();
 

@@ -27,7 +27,7 @@ class NPM
      * @param  Environment $environment
      * @param  string $rootPath
      */
-    public function __construct(Environment $environment, string $rootPath = '')
+    public function __construct(Environment $environment, $rootPath = null)
     {
         $this->environment = $environment;
         $this->rootPath    = $rootPath;
@@ -42,7 +42,7 @@ class NPM
      *
      * @return bool
      */
-    public function exists(): bool
+    public function exists()
     {
         $bin = $this->environment->getNodeBin();
 
@@ -74,7 +74,7 @@ class NPM
      *
      * @return Response
      */
-    public function installPackages(): Response
+    public function installPackages()
     {
         return $this->rawCommand('install');
     }
@@ -86,7 +86,7 @@ class NPM
      * 
      * @return Response
      */
-    public function rawCommand(string $command): Response
+    public function rawCommand($command)
     {
         $CURRENT_WORKING_DIRECTORY = getcwd();
 
@@ -108,7 +108,7 @@ class NPM
      *
      * @return bool
      */
-    public function packagesExists(): bool
+    public function packagesExists()
     {
         return file_exists($this->rootPath . '/package.json') ? true : false;
     }
@@ -119,7 +119,7 @@ class NPM
      *
      * @return bool
      */
-    public function packagesInstalled(): bool
+    public function packagesInstalled()
     {
         return file_exists($this->rootPath . '/node_modules/') ? true : false;
     }

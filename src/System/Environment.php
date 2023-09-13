@@ -24,7 +24,7 @@ class Environment
      * @param  string $rootPath (Absolute Path [__DIR__]) The root directory of the project where package.json is located.
      * @param  string $binPath (Absolute Path [__DIR__]) The directory where the node js should be installed.
      */
-    public function __construct(string $rootPath, string $binPath = '')
+    public function __construct($rootPath, $binPath = null)
     {
         $this->rootPath = rtrim($rootPath, '/');
         $this->nvmPath = rtrim($binPath, '/');
@@ -63,7 +63,7 @@ class Environment
      *
      * @return bool
      */
-    protected function nodeEnvironmentExists(): bool
+    protected function nodeEnvironmentExists()
     {
         return $this->getNodeEnvironment() !== null ? true : false;
     }
@@ -74,7 +74,7 @@ class Environment
      *
      * @return string|null
      */
-    protected function getNodeEnvironment(): ?string
+    protected function getNodeEnvironment()
     {
         $variables = explode(':', getenv('PATH'));
 
@@ -107,7 +107,7 @@ class Environment
      *
      * @return string|null
      */
-    public function getNodeBin(): ?string
+    public function getNodeBin()
     {
         $node = $this->getNodeVersion();
 
@@ -123,7 +123,7 @@ class Environment
      *
      * @return string|null
      */
-    public function getNodeVersion(): ?string
+    public function getNodeVersion()
     {
         $path = $this->getNodePath() . '/*';
         $nodes = array_filter(glob($path), 'is_dir');
@@ -152,7 +152,7 @@ class Environment
      *
      * @return string
      */
-    public function getNodePath(): string
+    public function getNodePath()
     {
         return $this->nvmPath . '/versions/node';
     }
@@ -166,7 +166,7 @@ class Environment
      */
     public function install($version = null)
     {
-        $version = $version ?? 'node';
+        $version = $version ?: 'node';
         $os = new \Tivie\OS\Detector();
 
         // NVM technique to install node js only works for unix since

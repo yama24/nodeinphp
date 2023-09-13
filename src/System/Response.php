@@ -24,7 +24,7 @@ class Response
      * @param  array $message
      * @param  int $code
      */
-    public function __construct(array $message, int $code)
+    public function __construct($message, $code)
     {
         $this->message = $message;
         $this->code    = $code;
@@ -35,7 +35,7 @@ class Response
      * 
      * @return int
      */
-    public function statusCode(): int
+    public function statusCode()
     {
         return $this->code;
     }
@@ -45,7 +45,7 @@ class Response
      * 
      * @return array
      */
-    public function output(): array
+    public function output()
     {
         return $this->message;
     }
