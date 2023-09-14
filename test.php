@@ -1,15 +1,10 @@
 <?php
 require_once "vendor/autoload.php";
-$environment = new \Yama\NodeInPhp\System\Environment(__DIR__);
-$node = new \Yama\NodeInPhp\Node($environment);
-if (!$node->exists()) {
-    $node->install('16.20.0');
-}
-$npm = new \Yama\NodeInPhp\NPM($environment);
-$npx = new \Yama\NodeInPhp\NPX($environment);
+$node = new \Yama\NodeInPhp\Node(__DIR__);
+$node->nvmUse('16.20.0');
 
-if ($npm->packagesExists() && !$npm->packagesInstalled()) {
-    $response = $npm->installPackages();
+if ($node->packagesExists() && !$node->packagesInstalled()) {
+    $response = $node->installPackages();
 
     if ($response->statusCode() == '0') {
         echo "Packages successfully installed.";
@@ -20,26 +15,26 @@ if ($npm->packagesExists() && !$npm->packagesInstalled()) {
     print_r($response->output());
 }
 
-$response = $node->rawCommand('-v');
+$response = $node->node('-v');
 
-$node = 'Node Version: ' . PHP_EOL;
+$message = 'Node Version: ' . PHP_EOL;
 foreach ($response->output() as $line) {
-    $node .= $line . PHP_EOL;
+    $message .= $line . PHP_EOL;
 }
-echo $node . PHP_EOL;
+echo $message . PHP_EOL;
 
-$response = $npm->rawCommand('-v');
+$response = $node->npm('-v');
 
-$npm = 'NPM Version: ' . PHP_EOL;
+$message = 'NPM Version: ' . PHP_EOL;
 foreach ($response->output() as $line) {
-    $npm .= $line . PHP_EOL;
+    $message .= $line . PHP_EOL;
 }
-echo $npm . PHP_EOL;
+echo $message . PHP_EOL;
 
-$response = $npx->rawCommand('-v');
+$response = $node->npx('-v');
 
-$npx = 'NPX Version: ' . PHP_EOL;
+$message = 'NPX Version: ' . PHP_EOL;
 foreach ($response->output() as $line) {
-    $npx .= $line . PHP_EOL;
+    $message .= $line . PHP_EOL;
 }
-echo $npx . PHP_EOL;
+echo $message . PHP_EOL;

@@ -19,6 +19,11 @@ class Environment
     protected $nvmPath;
 
     /**
+     * @var string
+     */
+    protected $nodeVersion = null;
+
+    /**
      * Environment constructor.
      *
      * @param  string $rootPath (Absolute Path [__DIR__]) The root directory of the project where package.json is located.
@@ -144,6 +149,14 @@ class Environment
             return version_compare($node1, $node2, '>') ? -1 : 1;
         });
 
+        if ($this->nodeVersion !== null) {
+            foreach ($nodes as $node) {
+                if (strpos($node, $this->nodeVersion) !== false) {
+                    return $node;
+                }
+            }
+        }
+
         return $nodes[0];
     }
 
@@ -189,5 +202,72 @@ class Environment
         shell_exec('curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" && nvm install ' . $version);
 
         $this->setNodeEnvironment();
+    }
+
+    /**
+     * Runs the raw nvm command.
+     *
+     * @param  string $command
+     *
+     * @return Response
+     */
+    public function nvm($command)
+    {
+        $CURRENT_WORKING_DIRECTORY = getcwd();
+
+        chdir($this->rootPath);
+
+        $MAX_EXECUTION_TIME = 1800; // "30 Mins" for slow internet connections.
+
+        set_time_limit($MAX_EXECUTION_TIME);
+
+        putenv('NVM_DIR=' . $this->nvmPath);
+        exec('[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" > /dev/null 2>&1 && nvm ' . $command, $message, $code);
+
+        chdir($CURRENT_WORKING_DIRECTORY);
+
+        return new Response($message, $code);
+    }
+
+
+    public function nvmUse($version)
+    {
+        if (!$this->isVersionInstalled($version)) {
+            $this->install($version);
+        }
+        $this->nvm('use ' . $version);
+        $this->nodeVersion = $version;
+        $this->setNodeEnvironment();
+    }
+
+    public function isVersionInstalled($version)
+    {
+        $path = $this->getNodePath() . '/*';
+        $nodes = array_filter(glob($path), 'is_dir');
+
+        if (empty($nodes)) {
+            return null;
+        }
+
+        // Sort Node JS according to its latest version being the first.
+        usort($nodes, function ($node1, $node2) {
+            $node1 = ltrim($node1, 'v');
+            $node2 = ltrim($node2, 'v');
+
+            if (version_compare($node1, $node2, '==')) {
+                return 0;
+            }
+
+            return version_compare($node1, $node2, '>') ? -1 : 1;
+        });
+
+        foreach ($nodes as $key => $value) {
+            $val = explode('/', $value);
+            $val = str_replace('v', '', end($val));
+            if (strpos($val, $version) !== false) {
+                return true;
+            }
+        }
+        return false;
     }
 }

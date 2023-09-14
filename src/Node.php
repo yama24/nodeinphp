@@ -9,64 +9,88 @@ use Yama\NodeInPhp\System\Response;
  * Class Node
  * @package Yama\NodeInPhp
  */
-class Node
+class Node extends Environment
 {
     /**
-     * @var Environment
-     */
-    protected $environment;
-
-    /**
-     * @var string
-     */
-    protected $rootPath;
-
-    /**
-     * Node constructor.
-     * 
-     * @param  Environment $environment
-     * @param  string $rootPath
-     */
-    public function __construct(Environment $environment, $rootPath = '')
-    {
-        $this->environment = $environment;
-        $this->rootPath    = $rootPath;
-
-        if (empty($this->rootPath)) {
-            $this->rootPath = $this->environment->rootPath;
-        }
-    }
-
-    /**
-     * Determines whether node has been installed in the project.
+     * Determines whether Node has been installed in the project.
      *
      * @return bool
      */
-    public function exists()
+    public function isNodeExist()
     {
-        $bin = $this->environment->getNodeBin();
+        return $this->exists('node');
+    }
+    /**
+     * Determines whether Npm has been installed in the project.
+     *
+     * @return bool
+     */
+    public function isNpmExist()
+    {
+        return $this->exists('npm');
+    }
+    /**
+     * Determines whether Npx has been installed in the project.
+     *
+     * @return bool
+     */
+    public function isNpxExist()
+    {
+        return $this->exists('npx');
+    }
+
+    /**
+     * Runs the raw node command.
+     * 
+     * @param  string $command
+     * 
+     * @return Response
+     */
+    public function node($command)
+    {
+        return $this->rawCommand('node ' . $command);
+    }
+
+    /**
+     * Runs the raw npm command.
+     * 
+     * @param  string $command
+     * 
+     * @return Response
+     */
+    public function npm($command)
+    {
+        return $this->rawCommand('npm ' . $command);
+    }
+
+    /**
+     * Runs the raw npx command.
+     * 
+     * @param  string $command
+     * 
+     * @return Response
+     */
+    public function npx($command)
+    {
+        return $this->rawCommand('npx ' . $command);
+    }
+
+    /**
+     * Determines whether code has been installed in the project.
+     *
+     * @return bool
+     */
+    public function exists($code)
+    {
+        $bin = $this->getNodeBin();
 
         if (empty($bin)) {
             return false;
-        } elseif (! file_exists($bin . '/node')) {
+        } elseif (!file_exists($bin . '/' . $code)) {
             return false;
         }
 
         return true;
-    }
-
-    /**
-     * Installs node environment in the project.
-     *
-     * @param  string $version version of node to install. (e.g. 10.15.3)
-     * 
-     * @return void
-     *
-     * @throws \Exception
-     */
-    public function install($version)
-    {
-        $this->environment->install($version);
     }
 
     /**
@@ -86,10 +110,41 @@ class Node
 
         set_time_limit($MAX_EXECUTION_TIME);
 
-        exec( escapeshellcmd('node ' . $command) . ' 2>&1', $message, $code );
+        exec(escapeshellcmd($command) . ' 2>&1', $message, $code);
 
         chdir($CURRENT_WORKING_DIRECTORY);
 
         return new Response($message, $code);
+    }
+
+    /**
+     * Installs the packages present in the package.json file.
+     *
+     * @return Response
+     */
+    public function installPackages()
+    {
+        return $this->npm('install');
+    }
+
+    /**
+     * Determines whether the project has packages to be installed.
+     *
+     * @return bool
+     */
+    public function packagesExists()
+    {
+        return file_exists($this->rootPath . '/package.json') ? true : false;
+    }
+
+    /**
+     * Determines whether the packages are already installed in the
+     * project.
+     *
+     * @return bool
+     */
+    public function packagesInstalled()
+    {
+        return file_exists($this->rootPath . '/node_modules/') ? true : false;
     }
 }
