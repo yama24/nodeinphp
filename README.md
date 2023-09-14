@@ -16,6 +16,7 @@ composer require yama/nodeinphp
 
 ## Examples
 ```
+<?php
 require_once "vendor/autoload.php";
 $node = new \Yama\NodeInPhp\Node(__DIR__);
 $node->nvmUse('16.20.0');
